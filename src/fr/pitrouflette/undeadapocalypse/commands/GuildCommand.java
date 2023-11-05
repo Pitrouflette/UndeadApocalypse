@@ -4,6 +4,7 @@ import fr.pitrouflette.undeadapocalypse.Main;
 import fr.pitrouflette.undeadapocalypse.utils.Guild;
 import fr.pitrouflette.undeadapocalypse.utils.manager.GuildManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -246,6 +247,53 @@ public class GuildCommand implements TabExecutor {
                     Main.guildChat.put(player, true);
                     player.sendMessage("§2Chat message enabled !");
                 }
+            }else if(args[0].equals("claim")){                      // CLAIM SECTION
+                if(new GuildManager().isPlayerInAnyGuild(player)) {
+                    Guild guild = new GuildManager().getPlayerGuild(player);
+                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                        Chunk chunk = player.getLocation().getChunk();
+                        if((guild.getClaims().size() * 5) < guild.getPower()){
+                            if(!guild.getClaims().contains(chunk)){
+                                if(!Main.claimedChunks.contains(chunk)){
+                                    guild.addClaim(chunk);
+                                    new GuildManager().saveGuilds();
+                                    player.sendMessage("§2You've successfully claimed this chunk !");
+                                }else{
+                                    player.sendMessage("§4This chunk has already been claimed by another guild !");
+                                }
+                            }else{
+                                player.sendMessage("§4This chunk already belong to your guild !");
+                            }
+                        }else{
+                            player.sendMessage("§4Your reputation isn't height enough !!");
+                        }
+                    }
+                }
+            }else if(args[0].equals("unClaim")){
+                if(new GuildManager().isPlayerInAnyGuild(player)) {
+                    Guild guild = new GuildManager().getPlayerGuild(player);
+                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                        Chunk chunk = player.getLocation().getChunk();
+                        if(guild.getClaims().contains(chunk)){
+                            guild.removeClaim(chunk);
+                            new GuildManager().saveGuilds();
+                            player.sendMessage("§2You've successfully un-claimed this chunk !");
+                        }else{
+                            player.sendMessage("§2This chunk has not been claimed by your guild, therefore, you can not un-claim it !");
+                        }
+                    }
+                }
+            }else if(args[0].equals("isClaimed")){
+                if(new GuildManager().isPlayerInAnyGuild(player)) {
+                    Guild guild = new GuildManager().getPlayerGuild(player);
+                    if(guild.getClaims().contains(player.getLocation().getChunk())){
+                        player.sendMessage("§2You guild own this chunk !");
+                    }else if(Main.claimedChunks.contains(player.getLocation().getChunk())){
+                        player.sendMessage("§4Another guild own this chunk !");
+                    }else{
+                        player.sendMessage("§2This chunk is free !");
+                    }
+                }
             }
         }
         return true;
@@ -259,11 +307,13 @@ public class GuildCommand implements TabExecutor {
             List<String> completions = new ArrayList<>();
             completions.add("join");
             completions.add("create");
+            completions.add("help");
             if(new GuildManager().isPlayerInAnyGuild(player)){
                 completions.add("leave");
                 completions.add("show");
                 completions.add("HDV");
                 completions.add("chat");
+                completions.add("isClaimed");
                 completions.remove("join");
                 completions.remove("create");
                 Guild guild = new GuildManager().getPlayerGuild(player);
@@ -278,6 +328,8 @@ public class GuildCommand implements TabExecutor {
                     completions.add("setHDV");
                     completions.add("setColor");
                     completions.add("invite");
+                    completions.add("claim");
+                    completions.add("unClaim");
                 }
                 if(guild.getChef().equals(player)){
                     completions.add("setName");
@@ -290,6 +342,8 @@ public class GuildCommand implements TabExecutor {
                     completions.add("setColor");
                     completions.add("kick");
                     completions.add("invite");
+                    completions.add("claim");
+                    completions.add("unClaim");
                 }
             }
             return completions;

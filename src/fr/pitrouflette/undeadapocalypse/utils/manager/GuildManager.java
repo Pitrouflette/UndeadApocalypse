@@ -3,6 +3,7 @@ package fr.pitrouflette.undeadapocalypse.utils.manager;
 import fr.pitrouflette.undeadapocalypse.Main;
 import fr.pitrouflette.undeadapocalypse.utils.Guild;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -31,7 +32,8 @@ public class GuildManager {
         List<UUID> rank1 = new ArrayList<>();
         List<UUID> rank2 = new ArrayList<>();
         List<UUID> rank3 = new ArrayList<>();
-        Guild guild = new Guild(name, members, player, 10, player.getLocation(), false, rank1, rank2, rank3, "§6");
+        List<Chunk> claims = new ArrayList<>();
+        Guild guild = new Guild(name, members, player, 10, player.getLocation(), false, rank1, rank2, rank3, "§6", claims);
         Main.guilds.put(name, guild);
 
         saveGuilds();
@@ -126,6 +128,7 @@ public class GuildManager {
                 List<String> rank1UUIDs = guildSection.getStringList("rank1");
                 List<String> rank2UUIDs = guildSection.getStringList("rank2");
                 List<String> rank3UUIDs = guildSection.getStringList("rank3");
+                List<Chunk> claims = (List<Chunk>) guildSection.getList("claims");
 
                 List<UUID> members = new ArrayList<>();
                 for (String memberUUID : memberUUIDs) {
@@ -146,8 +149,9 @@ public class GuildManager {
                 for (String rank3UUID : rank3UUIDs) {
                     rank3.add(UUID.fromString(rank3UUID));
                 }
-                Guild guild = new Guild(name, members, leader, reputation, hdv, publicc, rank1, rank2, rank3, color);
+                Guild guild = new Guild(name, members, leader, reputation, hdv, publicc, rank1, rank2, rank3, color, claims);
                 Main.guilds.put(guildName, guild);
+                Main.claimedChunks = claims;
             }
         }
     }
@@ -192,6 +196,12 @@ public class GuildManager {
                 rank3UUIDs.add(rank3UUID.toString());
             }
             guildSection.set("rank3", rank3UUIDs);
+
+            List<Chunk> claims = new ArrayList<>();
+            for(Chunk claim : guild.getClaims()){
+                claims.add(claim);
+            }
+            guildSection.set("claims", claims);
         }
 
         try {

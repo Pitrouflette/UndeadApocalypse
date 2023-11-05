@@ -1,5 +1,6 @@
 package fr.pitrouflette.undeadapocalypse.utils;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -12,6 +13,7 @@ public class Guild {
     private final List<UUID> rank1;
     private final List<UUID> rank2;
     private final List<UUID> rank3;
+    private final List<Chunk> claimedChunk;
     private String name;
     private String color;
     private Player chef;
@@ -20,7 +22,7 @@ public class Guild {
     private Boolean publicc;
 
 
-    public Guild(String name, List<UUID> players, Player chef, int power, Location hdv, Boolean publicc, List<UUID> rank1, List<UUID> rank2, List<UUID> rank3, String color) {
+    public Guild(String name, List<UUID> players, Player chef, int power, Location hdv, Boolean publicc, List<UUID> rank1, List<UUID> rank2, List<UUID> rank3, String color, List<Chunk> claimedChunk) {
         this.name = name;
         this.players = players;
         this.chef = chef;
@@ -31,6 +33,7 @@ public class Guild {
         this.rank2 = rank2;
         this.rank3 = rank3;
         this.color = color;
+        this.claimedChunk = claimedChunk;
     }
 
 
@@ -40,6 +43,10 @@ public class Guild {
     public List<UUID> getPlayers(){ return players; }
     public void removePlayer(Player player){ players.remove(player.getUniqueId()); }
     public void addPlayers(Player player){ players.add(player.getUniqueId()); }
+
+    public List<Chunk> getClaims(){ return claimedChunk; }
+    public void removeClaim(Chunk chunk){ claimedChunk.remove(chunk); }
+    public void addClaim(Chunk chunk){ claimedChunk.add(chunk);}
 
     public Player getChef(){
         return chef;

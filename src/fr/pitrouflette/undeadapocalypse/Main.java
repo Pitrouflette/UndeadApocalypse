@@ -1,6 +1,7 @@
 package fr.pitrouflette.undeadapocalypse;
 
 import fr.pitrouflette.undeadapocalypse.commands.GuildCommand;
+import fr.pitrouflette.undeadapocalypse.listener.Claims;
 import fr.pitrouflette.undeadapocalypse.listener.GuildChat;
 import fr.pitrouflette.undeadapocalypse.menu.MenuInteractEvent;
 import fr.pitrouflette.undeadapocalypse.listener.PlayerDieEvent;
@@ -11,6 +12,7 @@ import fr.pitrouflette.undeadapocalypse.utils.ConfigUtils;
 import fr.pitrouflette.undeadapocalypse.utils.Guild;
 import fr.pitrouflette.undeadapocalypse.utils.manager.GuildManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,6 +22,7 @@ import org.spigotmc.SpigotConfig;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +32,7 @@ public class Main extends JavaPlugin {
     public static HashMap<String, Guild> guilds = new HashMap<>();
     public static HashMap<Player, Guild> invitation = new HashMap<>();
     public static HashMap<Player, Boolean> guildChat = new HashMap<>();
+    public static List<Chunk> claimedChunks = new ArrayList<>();
     private static Main instance;
 
     ConfigInit configInit = new ConfigInit();
@@ -57,6 +61,7 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MenuOpenedEvents(), this);
         Bukkit.getPluginManager().registerEvents(new MenuInteractEvent(), this);
         Bukkit.getPluginManager().registerEvents(new GuildChat(), this);
+        Bukkit.getPluginManager().registerEvents(new Claims(), this);
         Objects.requireNonNull(getCommand("guild")).setExecutor(new GuildCommand(this));
 
         if (!ConfigUtils.configFileExist(this.getDataFolder(), "apocalypse.yml")) {
