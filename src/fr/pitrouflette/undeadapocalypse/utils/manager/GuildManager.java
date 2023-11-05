@@ -33,14 +33,12 @@ public class GuildManager {
         List<UUID> rank2 = new ArrayList<>();
         List<UUID> rank3 = new ArrayList<>();
         List<Chunk> claims = new ArrayList<>();
+        claims.add(player.getLocation().getChunk());
         Guild guild = new Guild(name, members, player, 10, player.getLocation(), false, rank1, rank2, rank3, "§6", claims);
         Main.guilds.put(name, guild);
 
         saveGuilds();
         player.sendMessage("§2Guild crée avec succès !");
-        player.setCustomNameVisible(true);
-        player.setCustomName("§4" + name + " " + player.getDisplayName());
-        player.setPlayerListName("§4" + name + " " + player.getDisplayName());
     }
 
     public void join(Player player, String name){
@@ -151,6 +149,14 @@ public class GuildManager {
                 }
                 Guild guild = new Guild(name, members, leader, reputation, hdv, publicc, rank1, rank2, rank3, color, claims);
                 Main.guilds.put(guildName, guild);
+                for (UUID member : guild.getPlayers()){
+                    Player player = Bukkit.getPlayer(member);
+                    if(Bukkit.getOnlinePlayers().contains(player)){
+                        player.setCustomName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
+                        player.setDisplayName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
+                        player.setPlayerListName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
+                    }
+                }
                 Main.claimedChunks = claims;
             }
         }
@@ -198,9 +204,7 @@ public class GuildManager {
             guildSection.set("rank3", rank3UUIDs);
 
             List<Chunk> claims = new ArrayList<>();
-            for(Chunk claim : guild.getClaims()){
-                claims.add(claim);
-            }
+            claims.addAll(guild.getClaims());
             guildSection.set("claims", claims);
         }
 

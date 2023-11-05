@@ -120,6 +120,7 @@ public class GuildCommand implements TabExecutor {
                     if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
                         player.sendMessage("§2Vous avez définis les lieux de votre hotel de ville !");
                         guild.setHdv(player.getLocation());
+                        guild.getClaims().set(0, player.getLocation().getChunk());
                         new GuildManager().saveGuilds();
                     }
                 }
