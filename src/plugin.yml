@@ -1,0 +1,9 @@
+name: UndeadApocalypse
+author: pitrouflette
+main: fr.pitrouflette.undeadapocalypse.Main
+api-version: 1.16
+version: 1.0
+
+commands:
+  guild:
+    description: guild command
