@@ -100,6 +100,8 @@ public class GuildManager {
 
         guild = YamlConfiguration.loadConfiguration(guildFile);
 
+        Main.guilds.clear();
+
         ConfigurationSection guildsSection = guild.getConfigurationSection("guilds");
         if (guildsSection != null) {
             for (String guildName : guildsSection.getKeys(false)) {
@@ -194,6 +196,7 @@ public class GuildManager {
 
         try {
             guild.save(guildFile);
+            loadGuilds();
         } catch (IOException e) {
             e.printStackTrace();
         }

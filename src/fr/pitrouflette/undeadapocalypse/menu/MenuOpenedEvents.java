@@ -1,6 +1,7 @@
 package fr.pitrouflette.undeadapocalypse.menu;
 
 import fr.pitrouflette.undeadapocalypse.Main;
+import fr.pitrouflette.undeadapocalypse.utils.manager.GuildManager;
 import fr.pitrouflette.undeadapocalypse.utils.manager.ItemManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,8 +19,8 @@ import java.io.IOException;
 
 public class MenuOpenedEvents implements Listener {
 
-    File configg = new File(Main.getPlugin(Main.class).getDataFolder(), "config.yml");
-    FileConfiguration config = YamlConfiguration.loadConfiguration(configg);
+    File configs = new File(Main.getPlugin(Main.class).getDataFolder(), "config.yml");
+    FileConfiguration config = YamlConfiguration.loadConfiguration(configs);
 
     ItemManager itemManager = new ItemManager();
     MenuManagerGUI menuManagerGUI = new MenuManagerGUI();
@@ -31,6 +32,7 @@ public class MenuOpenedEvents implements Listener {
         Inventory inv = player.getInventory();
         inv.setItem(8, itemManager.getItem("§6Menu"));
         Main.guildChat.put(player, false);
+        new GuildManager().loadGuilds();
 
     }
 

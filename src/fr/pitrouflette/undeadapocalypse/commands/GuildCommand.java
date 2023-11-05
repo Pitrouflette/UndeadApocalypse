@@ -153,6 +153,7 @@ public class GuildCommand implements TabExecutor {
                                 player.sendMessage("§2Vous avez promu " + args[1] + " au rang de commendant");
                                 playerProm.sendMessage("§2Vous avez été promu au rang de commandant par votre chef !");
                             }
+                            new GuildManager().saveGuilds();
                         }else{
                             player.sendMessage("§4Vous ne pouvez pas promote ce joueur !!");
                         }
@@ -180,6 +181,7 @@ public class GuildCommand implements TabExecutor {
                                 playerDem.sendMessage("§4Vous avez été demote du rang de commendant, vous etes maintenant simple membre");
                                 player.sendMessage("§4Vous avez demote " + args[1] + " du rang de commendant, il est maintenant simple membre");
                             }
+                            new GuildManager().saveGuilds();
                         }else{
                             player.sendMessage("§4Vous ne pouvez pas promote ce joueur !!");
                         }
@@ -200,6 +202,7 @@ public class GuildCommand implements TabExecutor {
                             player.sendMessage("§2Le nouveau leader de la guild est : " + args[1]);
                             guild.addRank1(player);
                             player.sendMessage("§4Vous avez été promu au rang de commendant");
+                            new GuildManager().saveGuilds();
                         }
                     }
                 }
@@ -210,6 +213,7 @@ public class GuildCommand implements TabExecutor {
                         if(Bukkit.getPlayer(args[1]) != null && guild.getPlayers().contains(Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId())){
                             guild.removePlayer(Objects.requireNonNull(Bukkit.getPlayer(args[1])));
                             player.sendMessage("§4Vous avez expulsé : " + args[1]);
+                            new GuildManager().saveGuilds();
                         }
                     }
                 }
@@ -219,6 +223,7 @@ public class GuildCommand implements TabExecutor {
                     if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
                         guild.setColor(args[1].replace("&", "§"));
                         player.sendMessage(args[1].replace("&", "§") + "La couleur de votre guild a été changé !");
+                        new GuildManager().saveGuilds();
                     }
                 }
             }else if (args[0].equals("invite") && args.length == 2){
