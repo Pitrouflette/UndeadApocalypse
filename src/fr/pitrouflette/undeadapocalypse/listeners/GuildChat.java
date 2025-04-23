@@ -1,4 +1,4 @@
-package fr.pitrouflette.undeadapocalypse.listener;
+package fr.pitrouflette.undeadapocalypse.listeners;
 
 import fr.pitrouflette.undeadapocalypse.Main;
 import fr.pitrouflette.undeadapocalypse.utils.Guild;
@@ -9,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class GuildChat implements Listener {
@@ -21,10 +20,11 @@ public class GuildChat implements Listener {
         if(new GuildManager().isPlayerInAnyGuild(player)){
             Guild guild = new GuildManager().getPlayerGuild(player);
             if(Main.guildChat.get(player).equals(true)){
-                for(UUID players : guild.getPlayers()){
-                    if(!Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(players))){return;}
-                    Objects.requireNonNull(Bukkit.getPlayer(players)).sendMessage("§l§0[ " + guild.getColor() + "⚔ §n§l" + guild.getName() + "'s chat§r§l " + guild.getColor() + player.getName() +" §r§l§0]§r§l " +
-                            "" + guild.getColor() + ev.getMessage());
+                for(UUID playerID : guild.getPlayers()){
+                    if(!Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(playerID))){return;}
+                    Player player2 = Bukkit.getPlayer(playerID);
+                    assert player2 != null;
+                    player2.sendMessage("§l§0[ " + guild.getColor() + "⚔ §n§l" + guild.getName() + "'s chat§r§l " + guild.getColor() + player2.getName() +" §r§l§0]§r§l " + guild.getColor() + ev.getMessage());
                 }
             }else{
                 for(Player player1 : Bukkit.getOnlinePlayers()){
@@ -35,7 +35,6 @@ public class GuildChat implements Listener {
             for(Player player1 : Bukkit.getOnlinePlayers()){
                 player1.sendMessage("§7[§r §l" + player.getName() + " §r§7]§r " + ev.getMessage());
             }
-
         }
     }
 }

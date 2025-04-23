@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="UndeadApocalypse:jar">
-    <output-path>$USER_HOME$/OneDrive/Documents/folder/Dev/Serveur teset Stellaria/plugins</output-path>
+    <output-path>$USER_HOME$/Desktop/Dev/AA - Minecraft/Serveurs/1.21.4/plugins</output-path>
     <root id="archive" name="UndeadApocalypse.jar">
       <element id="module-output" name="UndeadApocalypse" />
     </root>

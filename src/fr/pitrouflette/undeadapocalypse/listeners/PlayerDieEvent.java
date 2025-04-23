@@ -1,4 +1,4 @@
-package fr.pitrouflette.undeadapocalypse.listener;
+package fr.pitrouflette.undeadapocalypse.listeners;
 
 import fr.pitrouflette.undeadapocalypse.utils.Guild;
 import fr.pitrouflette.undeadapocalypse.utils.manager.GuildManager;

@@ -1,4 +1,4 @@
-package fr.pitrouflette.undeadapocalypse.listener;
+package fr.pitrouflette.undeadapocalypse.listeners;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
@@ -36,14 +36,14 @@ public class ZombiesTypes implements Listener {
         giant.setCustomNameVisible(true);
         giant.setMaxHealth(100.0);
         giant.setHealth(100.0);
-        giant.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.2);
+        giant.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0.2);
     }
 
     @SuppressWarnings("all")
     public static void registerFastZombie(Zombie zombie) {
         zombie.setCustomName("Zombie Rapide");
         zombie.setCustomNameVisible(true);
-        zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.35);
+        zombie.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0.35);
         ((LivingEntity) zombie).addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 2));
     }
 

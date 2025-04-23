@@ -19,7 +19,6 @@ public class ConfigInit{
     public List<Integer> borderItemsSlotList = new ArrayList<>();
 
     public void initConfig(String fileName){  //cette class est exécuter une seul fois dans la vie du plugin, son optimisation n'est pas un problème
-        File configs = new File(Main.getPlugin(Main.class).getDataFolder(), "config.yml");
 
         borderItemsSlotList.add(0);
         borderItemsSlotList.add(1);
@@ -58,7 +57,7 @@ public class ConfigInit{
                     File item = new File(Main.getPlugin(Main.class).getDataFolder(), "item.yml");
                     FileConfiguration items = YamlConfiguration.loadConfiguration(item);
 
-                    for (int i = 0; i <= 1; i++){
+                    for (int i = 0; i <= itemsList.size(); i++){
                         items.set("items." + itemsList.get(i) + ".material", "STONE");
                         items.set("items." + itemsList.get(i) + ".name", itemsList.get(i));
                         items.set("items." + itemsList.get(i) + ".glowing", false);
@@ -81,6 +80,7 @@ public class ConfigInit{
             case "config.yml" -> {
                 if (!ConfigUtils.configFileExist(Main.getPlugin(Main.class).getDataFolder(), "config.yml")) {
                     ConfigUtils.createConfigFile("config.yml");
+                    File configs = new File(Main.getPlugin(Main.class).getDataFolder(), "config.yml");
                     FileConfiguration config = YamlConfiguration.loadConfiguration(configs);
 
                     config.set("gui.menu.name", "Main Menu");
@@ -102,8 +102,56 @@ public class ConfigInit{
                     } catch (IOException exception) {
                         exception.printStackTrace();
                     }
-                }else{
-                    FileConfiguration config = YamlConfiguration.loadConfiguration(configs);
+                }
+            }
+            case "lang.yml" -> {
+                if (!ConfigUtils.configFileExist(Main.getPlugin(Main.class).getDataFolder(), "lang.yml")) {
+                    ConfigUtils.createConfigFile("lang.yml");
+                    File langFile = new File(Main.getPlugin(Main.class).getDataFolder(), "lang.yml");
+                    FileConfiguration lang = YamlConfiguration.loadConfiguration(langFile);
+
+                    lang.set("prefix", "&7[&c&l &6&lApocalypse&7]&r");
+
+                    lang.set("events.join.message", "&7[&2+&7] <player>");
+                    lang.set("events.join.titles.title", "&c&l&6&lUndeadApocalypse&c&l");
+                    lang.set("events.join.titles.subtitle", "&eAdventure &6&lServer");
+
+                    lang.set("events.leave.message", "&7[&4-&7] <player>");
+
+                    lang.set("events.reload.success", "&7[&c&l &6&lApocalypse&7]&r &2Plugin reloaded successfully");
+                    lang.set("events.reload.fail", "&7[&c&l &6&lApocalypse&7]&r &4Plugin reload failure");
+
+                    try {
+                        lang.save(langFile);
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
+                }
+            }
+            case "guild.yml" -> {
+                if (!ConfigUtils.configFileExist(Main.getPlugin(Main.class).getDataFolder(), "guild.yml")) {
+                    ConfigUtils.createConfigFile("guild.yml");
+                    File guildFile = new File(Main.getPlugin(Main.class).getDataFolder(), "lang.yml");
+                    FileConfiguration guild = YamlConfiguration.loadConfiguration(guildFile);
+
+                    try {
+                        guild.save(guildFile);
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
+                }
+            }
+            case "apocalypse.yml" -> {
+                if (!ConfigUtils.configFileExist(Main.getPlugin(Main.class).getDataFolder(), "apocalypse.yml")) {
+                    ConfigUtils.createConfigFile("apocalypse.yml");
+                    File apoFile = new File(Main.getPlugin(Main.class).getDataFolder(), "lang.yml");
+                    FileConfiguration apo = YamlConfiguration.loadConfiguration(apoFile);
+
+                    try {
+                        apo.save(apoFile);
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
                 }
             }
             default -> {

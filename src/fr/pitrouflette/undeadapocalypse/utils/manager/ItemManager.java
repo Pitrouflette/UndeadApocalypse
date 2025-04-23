@@ -54,23 +54,23 @@ public class ItemManager {
             return itemStack;
         }
     }
-
+    @SuppressWarnings("deprecation")
     public static ItemStack modifyArmor(ItemStack armorPiece, Integer amount) {
         UUID MODIFIER_UUID = UUID.randomUUID();
         ItemMeta meta = armorPiece.getItemMeta();
         assert meta != null;
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(MODIFIER_UUID, "Custom armor modifier", amount, AttributeModifier.Operation.ADD_NUMBER));
+        meta.addAttributeModifier(Attribute.ARMOR, new AttributeModifier(MODIFIER_UUID, "Custom armor modifier", amount, AttributeModifier.Operation.ADD_NUMBER));
         armorPiece.setItemMeta(meta);
         return armorPiece;
     }
-
+    @SuppressWarnings("deprecation")
     public static ItemStack modifyDiamondSword(ItemStack diamondSword, Integer amout) {
         UUID MODIFIER_UUID = UUID.randomUUID();
         UUID MODIFIER_UUID2 = UUID.randomUUID();
         ItemMeta meta = diamondSword.getItemMeta();
         assert meta != null;
-        meta.addAttributeModifier(org.bukkit.attribute.Attribute.GENERIC_ATTACK_DAMAGE, new AttributeModifier(MODIFIER_UUID, "Custom damage modifier", amout, AttributeModifier.Operation.ADD_NUMBER));
-        meta.addAttributeModifier(org.bukkit.attribute.Attribute.GENERIC_ATTACK_DAMAGE, new AttributeModifier(MODIFIER_UUID2, "Custom damage modifier2", amout, AttributeModifier.Operation.ADD_NUMBER));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, new AttributeModifier(MODIFIER_UUID, "Custom damage modifier", amout, AttributeModifier.Operation.ADD_NUMBER));
+        meta.addAttributeModifier(org.bukkit.attribute.Attribute.ATTACK_DAMAGE, new AttributeModifier(MODIFIER_UUID2, "Custom damage modifier2", amout, AttributeModifier.Operation.ADD_NUMBER));
         diamondSword.setItemMeta(meta);
         return diamondSword;
     }

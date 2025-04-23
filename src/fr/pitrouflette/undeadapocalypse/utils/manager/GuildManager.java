@@ -12,10 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class GuildManager {
 
@@ -32,8 +29,7 @@ public class GuildManager {
         List<UUID> rank1 = new ArrayList<>();
         List<UUID> rank2 = new ArrayList<>();
         List<UUID> rank3 = new ArrayList<>();
-        List<Chunk> claims = new ArrayList<>();
-        claims.add(player.getLocation().getChunk());
+        List<List> claims = new ArrayList<>();
         Guild guild = new Guild(name, members, player, 10, player.getLocation(), false, rank1, rank2, rank3, "§6", claims);
         Main.guilds.put(name, guild);
 
@@ -50,17 +46,17 @@ public class GuildManager {
             if(Main.guilds.get(name).isPublic()){
                 Main.guilds.get(name).addPlayers(player);
                 player.setCustomNameVisible(true);
-                player.setCustomName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
-                player.setDisplayName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
-                player.setPlayerListName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
+                player.setCustomName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
+                player.setDisplayName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
+                player.setPlayerListName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
                 Main.guilds.get(name).addPower(10);
             }else if (Main.invitation.keySet().contains(player)){
                 if(Main.invitation.get(player).getName().equals(name)){
                     Main.guilds.get(name).addPlayers(player);
                     player.setCustomNameVisible(true);
-                    player.setCustomName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
-                    player.setDisplayName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
-                    player.setPlayerListName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
+                    player.setCustomName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
+                    player.setDisplayName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
+                    player.setPlayerListName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
                     Main.guilds.get(name).addPower(10);
                 }
             }else{
@@ -110,7 +106,7 @@ public class GuildManager {
                 assert guildSection != null;
                 String leaderName = guildSection.getString("leader");
                 assert leaderName != null;
-                Player leader = Bukkit.getServer().getPlayer(leaderName);
+                Player leader = Bukkit.getPlayer(leaderName);
 
                 int reputation = guildSection.getInt("reputation");
 
@@ -126,7 +122,7 @@ public class GuildManager {
                 List<String> rank1UUIDs = guildSection.getStringList("rank1");
                 List<String> rank2UUIDs = guildSection.getStringList("rank2");
                 List<String> rank3UUIDs = guildSection.getStringList("rank3");
-                List<Chunk> claims = (List<Chunk>) guildSection.getList("claims");
+                List<List> claims = (List<List>) guildSection.getList("claims");
 
                 List<UUID> members = new ArrayList<>();
                 for (String memberUUID : memberUUIDs) {
@@ -152,12 +148,13 @@ public class GuildManager {
                 for (UUID member : guild.getPlayers()){
                     Player player = Bukkit.getPlayer(member);
                     if(Bukkit.getOnlinePlayers().contains(player)){
-                        player.setCustomName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
-                        player.setDisplayName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
-                        player.setPlayerListName(Main.guilds.get(name).getColor() + name  + " " + player.getDisplayName());
+                        assert player != null;
+                        player.setCustomName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
+                        player.setDisplayName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
+                        player.setPlayerListName(Main.guilds.get(name).getColor() + name  + " " + player.getName());
                     }
                 }
-                Main.claimedChunks = claims;
+                Main.claimedChunks.addAll(claims);
             }
         }
     }
@@ -170,9 +167,11 @@ public class GuildManager {
             String guildName = entry.getKey();
             Guild guild = entry.getValue();
 
+            if (guild.getPlayers().isEmpty()){continue;}
+
             ConfigurationSection guildSection = guildsSection.createSection(guildName);
 
-            guildSection.set("leader", guild.getChef().getDisplayName());
+            guildSection.set("leader", guild.getChef().getName());
             guildSection.set("reputation", guild.getPower());
             guildSection.set("hdv", guild.getHdv());
             guildSection.set("name", guild.getName());
@@ -203,8 +202,10 @@ public class GuildManager {
             }
             guildSection.set("rank3", rank3UUIDs);
 
-            List<Chunk> claims = new ArrayList<>();
-            claims.addAll(guild.getClaims());
+            List<List> claims = new ArrayList<>();
+            for (List list : guild.getClaims()) {
+                claims.add(list);
+            }
             guildSection.set("claims", claims);
         }
 

@@ -4,7 +4,6 @@ import fr.pitrouflette.undeadapocalypse.Main;
 import fr.pitrouflette.undeadapocalypse.utils.Guild;
 import fr.pitrouflette.undeadapocalypse.utils.manager.GuildManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -47,7 +46,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("show")) {
                 if(new GuildManager().isPlayerInAnyGuild(player)){
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    player.sendMessage("§6===================" + guild.getColor() + guild.getName() + "§6===================");
+                    player.sendMessage("§6=================== " + guild.getColor() + guild.getName() + " §6===================");
                     player.sendMessage(guild.getColor() +"§lleader : §r§6" + guild.getChef().getDisplayName());
                     player.sendMessage(guild.getColor() +"§lréputation : §r§6" + guild.getPower());
                     player.sendMessage(guild.getColor() +"§lguild public : §r§6" + guild.isPublic());
@@ -70,14 +69,14 @@ public class GuildCommand implements TabExecutor {
                     player.sendMessage(" ");
                     player.sendMessage(guild.getColor() +"§lmembres(s) : §r§6");
                     List<UUID> members = guild.getPlayers();
-                    //members.remove(guild.getRank1());
-                    //members.remove(guild.getRank2());         -----> A REVOIR
-                    //members.remove(guild.getRank3());
-                    //members.remove(guild.getChef());
+                    members.removeAll(guild.getRank1());
+                    members.removeAll(guild.getRank2());
+                    members.removeAll(guild.getRank3());
+                    members.remove(guild.getChef().getUniqueId());
                     for(UUID uuid : members){
                         player.sendMessage(guild.getColor() +"- " + Objects.requireNonNull(Bukkit.getPlayer(uuid)).getDisplayName());
                     }
-                    player.sendMessage("§6===================" + guild.getColor() + guild.getName() + "§6===================");
+                    player.sendMessage("§6=================== " + guild.getColor() + guild.getName() + " §6===================");
                 }else{
                     player.sendMessage("§4Vous n'êtes dans aucune guild !!");
                 }
@@ -120,7 +119,6 @@ public class GuildCommand implements TabExecutor {
                     if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
                         player.sendMessage("§2Vous avez définis les lieux de votre hotel de ville !");
                         guild.setHdv(player.getLocation());
-                        guild.getClaims().set(0, player.getLocation().getChunk());
                         new GuildManager().saveGuilds();
                     }
                 }
@@ -252,11 +250,12 @@ public class GuildCommand implements TabExecutor {
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
                     if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
-                        Chunk chunk = player.getLocation().getChunk();
+                        List<Integer> claim = new ArrayList<>();
+                        claim.add(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
                         if((guild.getClaims().size() * 5) < guild.getPower()){
-                            if(!guild.getClaims().contains(chunk)){
-                                if(!Main.claimedChunks.contains(chunk)){
-                                    guild.addClaim(chunk);
+                            if(!guild.getClaims().contains(claim)){
+                                if(!Main.claimedChunks.contains(claim)){
+                                    guild.addClaim(claim);
                                     new GuildManager().saveGuilds();
                                     player.sendMessage("§2You've successfully claimed this chunk !");
                                 }else{
@@ -274,9 +273,10 @@ public class GuildCommand implements TabExecutor {
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
                     if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
-                        Chunk chunk = player.getLocation().getChunk();
-                        if(guild.getClaims().contains(chunk)){
-                            guild.removeClaim(chunk);
+                        List<Integer> claim = new ArrayList<>();
+                        claim.add(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+                        if(guild.getClaims().contains(claim)){
+                            guild.removeClaim(claim);
                             new GuildManager().saveGuilds();
                             player.sendMessage("§2You've successfully un-claimed this chunk !");
                         }else{
@@ -287,9 +287,11 @@ public class GuildCommand implements TabExecutor {
             }else if(args[0].equals("isClaimed")){
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getClaims().contains(player.getLocation().getChunk())){
+                    List<Integer> claim = new ArrayList<>();
+                    claim.add(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+                    if(guild.getClaims().contains(claim)){
                         player.sendMessage("§2You guild own this chunk !");
-                    }else if(Main.claimedChunks.contains(player.getLocation().getChunk())){
+                    }else if(Main.claimedChunks.contains(claim)){
                         player.sendMessage("§4Another guild own this chunk !");
                     }else{
                         player.sendMessage("§2This chunk is free !");

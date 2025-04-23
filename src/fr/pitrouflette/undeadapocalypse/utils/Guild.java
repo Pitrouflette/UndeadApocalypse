@@ -13,7 +13,7 @@ public class Guild {
     private final List<UUID> rank1;
     private final List<UUID> rank2;
     private final List<UUID> rank3;
-    private final List<Chunk> claimedChunk;
+    private final List<List> claimedChunk;
     private String name;
     private String color;
     private Player chef;
@@ -22,7 +22,7 @@ public class Guild {
     private Boolean publicc;
 
 
-    public Guild(String name, List<UUID> players, Player chef, int power, Location hdv, Boolean publicc, List<UUID> rank1, List<UUID> rank2, List<UUID> rank3, String color, List<Chunk> claimedChunk) {
+    public Guild(String name, List<UUID> players, Player chef, int power, Location hdv, Boolean publicc, List<UUID> rank1, List<UUID> rank2, List<UUID> rank3, String color, List<List> claimedChunk) {
         this.name = name;
         this.players = players;
         this.chef = chef;
@@ -44,9 +44,9 @@ public class Guild {
     public void removePlayer(Player player){ players.remove(player.getUniqueId()); }
     public void addPlayers(Player player){ players.add(player.getUniqueId()); }
 
-    public List<Chunk> getClaims(){ return claimedChunk; }
-    public void removeClaim(Chunk chunk){ claimedChunk.remove(chunk); }
-    public void addClaim(Chunk chunk){ claimedChunk.add(chunk);}
+    public List<List> getClaims(){ return claimedChunk; }
+    public void removeClaim(List chunk){ claimedChunk.remove(chunk); }
+    public void addClaim(List chunk){ claimedChunk.add(chunk);}
 
     public Player getChef(){
         return chef;

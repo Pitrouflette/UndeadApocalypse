@@ -1,24 +1,19 @@
 package fr.pitrouflette.undeadapocalypse;
 
 import fr.pitrouflette.undeadapocalypse.commands.GuildCommand;
-import fr.pitrouflette.undeadapocalypse.listener.Claims;
-import fr.pitrouflette.undeadapocalypse.listener.GuildChat;
+import fr.pitrouflette.undeadapocalypse.listeners.*;
 import fr.pitrouflette.undeadapocalypse.menu.MenuInteractEvent;
-import fr.pitrouflette.undeadapocalypse.listener.PlayerDieEvent;
 import fr.pitrouflette.undeadapocalypse.menu.MenuOpenedEvents;
-import fr.pitrouflette.undeadapocalypse.listener.ZombiesTypes;
 import fr.pitrouflette.undeadapocalypse.utils.ConfigInit;
 import fr.pitrouflette.undeadapocalypse.utils.ConfigUtils;
 import fr.pitrouflette.undeadapocalypse.utils.Guild;
 import fr.pitrouflette.undeadapocalypse.utils.manager.GuildManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.spigotmc.SpigotConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +27,7 @@ public class Main extends JavaPlugin {
     public static HashMap<String, Guild> guilds = new HashMap<>();
     public static HashMap<Player, Guild> invitation = new HashMap<>();
     public static HashMap<Player, Boolean> guildChat = new HashMap<>();
-    public static List<Chunk> claimedChunks = new ArrayList<>();
+    public static List<List> claimedChunks = new ArrayList<>();
     private static Main instance;
 
     ConfigInit configInit = new ConfigInit();
@@ -47,12 +42,13 @@ public class Main extends JavaPlugin {
         this.getServer().getConsoleSender().sendMessage("§8status des fichiers de configurations : §2✔");
         this.getServer().getConsoleSender().sendMessage("§6===================§2PLugin started§6===================");
 
-        SpigotConfig.unknownCommandMessage = "§e[§6U§8A§e] Il semble il y avoir quelques interférences... Cette commande n'a pas pu être reconnu...";
-
         new GuildManager().loadGuilds();
 
         configInit.initConfig("item.yml");
         configInit.initConfig("config.yml");
+        configInit.initConfig("guild.yml");
+        configInit.initConfig("apocalypse.yml");
+        configInit.initConfig("lang.yml");
 
         //new SpawnZombieAroundPlayer().scheduleRandomZombieGeneration();
 
@@ -62,30 +58,8 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MenuInteractEvent(), this);
         Bukkit.getPluginManager().registerEvents(new GuildChat(), this);
         Bukkit.getPluginManager().registerEvents(new Claims(), this);
+        Bukkit.getPluginManager().registerEvents(new OnJoinLeave(), this);
         Objects.requireNonNull(getCommand("guild")).setExecutor(new GuildCommand(this));
-
-        if (!ConfigUtils.configFileExist(this.getDataFolder(), "apocalypse.yml")) {
-            ConfigUtils.createConfigFile("apocalypse.yml");
-        }
-        File file = new File(this.getDataFolder(), "apocalypse.yml");
-        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-
-        try {
-            config.save(file);
-        } catch (IOException var8) {
-            var8.printStackTrace();
-        }
-
-        if (!ConfigUtils.configFileExist(this.getDataFolder(), "guild.yml")) {
-            ConfigUtils.createConfigFile("guild.yml");
-        }
-        File guildFile = new File(this.getDataFolder(), "guild.yml");
-        FileConfiguration guild = YamlConfiguration.loadConfiguration(guildFile);
-        try {
-            guild.save(guildFile);
-        } catch (IOException var8) {
-            var8.printStackTrace();
-        }
     }
 
     public static Main getInstance(){
