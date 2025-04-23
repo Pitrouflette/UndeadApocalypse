@@ -40,6 +40,7 @@ public class MenuOpenedEvents implements Listener {
     public void onPlayerClick(PlayerInteractEvent ev){
         Player player = ev.getPlayer();
         if(player.getItemInHand().equals(itemManager.getItem("§6Menu"))){
+            ev.setCancelled(true);
             menuManagerGUI.openMainGUI(player);
         }
     }
@@ -59,6 +60,7 @@ public class MenuOpenedEvents implements Listener {
 
         if(event.getCurrentItem().getItemMeta().getDisplayName().equals("§6Menu")){
             menuManagerGUI.openMainGUI(player);
+            event.setCancelled(true);
         }else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§6Opened Menu")){
             event.setCancelled(true);
         }

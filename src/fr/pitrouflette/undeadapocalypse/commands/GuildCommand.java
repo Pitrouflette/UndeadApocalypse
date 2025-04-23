@@ -47,7 +47,7 @@ public class GuildCommand implements TabExecutor {
                 if(new GuildManager().isPlayerInAnyGuild(player)){
                     Guild guild = new GuildManager().getPlayerGuild(player);
                     player.sendMessage("§6=================== " + guild.getColor() + guild.getName() + " §6===================");
-                    player.sendMessage(guild.getColor() +"§lleader : §r§6" + guild.getChef().getDisplayName());
+                    player.sendMessage(guild.getColor() +"§lleader : §r§6" + guild.getChef());
                     player.sendMessage(guild.getColor() +"§lréputation : §r§6" + guild.getPower());
                     player.sendMessage(guild.getColor() +"§lguild public : §r§6" + guild.isPublic());
                     player.sendMessage(guild.getColor() +"§lNombre de membres : §r§6" + guild.getPlayers().size());
@@ -69,12 +69,8 @@ public class GuildCommand implements TabExecutor {
                     player.sendMessage(" ");
                     player.sendMessage(guild.getColor() +"§lmembres(s) : §r§6");
                     List<UUID> members = guild.getPlayers();
-                    members.removeAll(guild.getRank1());
-                    members.removeAll(guild.getRank2());
-                    members.removeAll(guild.getRank3());
-                    members.remove(guild.getChef().getUniqueId());
                     for(UUID uuid : members){
-                        player.sendMessage(guild.getColor() +"- " + Objects.requireNonNull(Bukkit.getPlayer(uuid)).getDisplayName());
+                        player.sendMessage(guild.getColor() +" - " + Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName());
                     }
                     player.sendMessage("§6=================== " + guild.getColor() + guild.getName() + " §6===================");
                 }else{
@@ -83,7 +79,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("disband")) {
                 if(new GuildManager().isPlayerInAnyGuild(player)){
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player)){
+                    if(guild.getChef().equals(player.getName())){
                         Main.guilds.remove(guild.getName());
                         new GuildManager().saveGuilds();
                     }
@@ -91,7 +87,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("setPrivate") && args.length == 2) {
                 if(new GuildManager().isPlayerInAnyGuild(player)){
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         if(args[1].equals("true")){
                             guild.setPublic(true);
                             player.sendMessage("§2Votre guild est désormais privée !");
@@ -105,7 +101,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("setName") && args.length == 2) {
                 if(new GuildManager().isPlayerInAnyGuild(player)){
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player)){
+                    if(guild.getChef().equals(player.getName())){
                         player.sendMessage("§2Le nom de votre guild est désormais : " + args[1]);
                         Main.guilds.remove(guild.getName());
                         Main.guilds.put(args[1], guild);
@@ -116,7 +112,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("setHDV")) {
                 if(new GuildManager().isPlayerInAnyGuild(player)){
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         player.sendMessage("§2Vous avez définis les lieux de votre hotel de ville !");
                         guild.setHdv(player.getLocation());
                         new GuildManager().saveGuilds();
@@ -131,7 +127,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("promote") && args.length == 2) {
                 if(new GuildManager().isPlayerInAnyGuild(player)){
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         if(Bukkit.getPlayer(args[1]) != null && guild.getPlayers().contains(Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId())){
                             Player playerProm = Bukkit.getPlayer(args[1]);
                             assert playerProm != null;
@@ -162,7 +158,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("demote") && args.length == 2) {
                 if(new GuildManager().isPlayerInAnyGuild(player)){
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         if(Bukkit.getPlayer(args[1]) != null && guild.getPlayers().contains(Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId())){
                             Player playerDem = Bukkit.getPlayer(args[1]);
                             assert playerDem != null;
@@ -196,9 +192,9 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("setChef") && args.length == 2) {
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player)){
+                    if(guild.getChef().equals(player.getName())){
                         if(Bukkit.getPlayer(args[1]) != null && guild.getPlayers().contains(Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId())){
-                            guild.setChef(Bukkit.getPlayer(args[1]));
+                            guild.setChef(args[1]);
                             player.sendMessage("§2Le nouveau leader de la guild est : " + args[1]);
                             guild.addRank1(player);
                             player.sendMessage("§4Vous avez été promu au rang de commendant");
@@ -209,7 +205,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("kick") && args.length == 2) {
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         if(Bukkit.getPlayer(args[1]) != null && guild.getPlayers().contains(Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId())){
                             guild.removePlayer(Objects.requireNonNull(Bukkit.getPlayer(args[1])));
                             player.sendMessage("§4Vous avez expulsé : " + args[1]);
@@ -220,7 +216,7 @@ public class GuildCommand implements TabExecutor {
             }else if (args[0].equals("setColor")) {
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         guild.setColor(args[1].replace("&", "§"));
                         player.sendMessage(args[1].replace("&", "§") + "La couleur de votre guild a été changé !");
                         new GuildManager().saveGuilds();
@@ -230,7 +226,7 @@ public class GuildCommand implements TabExecutor {
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
                     if(!guild.isPublic()){player.sendMessage("§4Votre guild est public, pas besoin d'invitation !"); return true;}
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         if(Bukkit.getPlayer(args[1]) != null && !guild.getPlayers().contains(Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId())){
                             Player invited = Bukkit.getPlayer(args[1]);
                             invited.sendMessage("§2Vous avez été invité dans la guild " + guild.getName());
@@ -249,7 +245,7 @@ public class GuildCommand implements TabExecutor {
             }else if(args[0].equals("claim")){                      // CLAIM SECTION
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         List<Integer> claim = new ArrayList<>();
                         claim.add(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
                         if((guild.getClaims().size() * 5) < guild.getPower()){
@@ -272,7 +268,7 @@ public class GuildCommand implements TabExecutor {
             }else if(args[0].equals("unClaim")){
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
-                    if(guild.getChef().equals(player) || guild.getRank3().contains(player.getUniqueId())){
+                    if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         List<Integer> claim = new ArrayList<>();
                         claim.add(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
                         if(guild.getClaims().contains(claim)){
@@ -334,7 +330,7 @@ public class GuildCommand implements TabExecutor {
                     completions.add("claim");
                     completions.add("unClaim");
                 }
-                if(guild.getChef().equals(player)){
+                if(guild.getChef().equals(player.getName())){
                     completions.add("setName");
                     completions.add("setPrivate");
                     completions.add("setHDV");
@@ -369,7 +365,7 @@ public class GuildCommand implements TabExecutor {
 
         }else if(args[0].equals("setPrivate")){
             Guild guild = new GuildManager().getPlayerGuild(player);
-            if(guild.getRank3().contains(player.getUniqueId()) || guild.getChef().equals(player)){
+            if(guild.getRank3().contains(player.getUniqueId()) || guild.getChef().equals(player.getName())){
                 List<String> completions = new ArrayList<>();
                 completions.add("true");
                 completions.add("false");
@@ -377,7 +373,7 @@ public class GuildCommand implements TabExecutor {
             }
         }else if(args[0].equals("setName")){
             Guild guild = new GuildManager().getPlayerGuild(player);
-            if(guild.getChef().equals(player)){
+            if(guild.getChef().equals(player.getName())){
                 List<String> completions = new ArrayList<>();
                 completions.add("[name]");
                 return completions;
@@ -385,7 +381,7 @@ public class GuildCommand implements TabExecutor {
         }else if(args[0].equals("promote")){
             List<String> completions = new ArrayList<>();
             Guild guild = new GuildManager().getPlayerGuild(player);
-            if(guild.getRank3().contains(player.getUniqueId()) || guild.getChef().equals(player)){
+            if(guild.getRank3().contains(player.getUniqueId()) || guild.getChef().equals(player.getName())){
                 for(UUID uudis : guild.getPlayers()){
                     completions.add(Objects.requireNonNull(Bukkit.getPlayer(uudis)).getDisplayName());
                 }
@@ -404,7 +400,7 @@ public class GuildCommand implements TabExecutor {
         }else if(args[0].equals("setColor")){
             List<String> completions = new ArrayList<>();
             Guild guild = new GuildManager().getPlayerGuild(player);
-            if(guild.getRank3().contains(player.getUniqueId()) || guild.getChef().equals(player)){
+            if(guild.getRank3().contains(player.getUniqueId()) || guild.getChef().equals(player.getName())){
                 completions.add("&4 - dark_red");
                 completions.add("&c - red");
                 completions.add("&6 - gold");

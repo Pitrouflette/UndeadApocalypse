@@ -1,12 +1,12 @@
 package fr.pitrouflette.undeadapocalypse.utils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.*;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
 
 public class ItemBuilder {
 
@@ -39,26 +40,23 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder getCustomSkull(String url) {
-
-        ItemStack head = stack;
-        if (url.isEmpty()) return this;
-
-        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-
-        profile.getProperties().put("textures", new Property("textures", url));
-
+    public ItemBuilder getCustomSkull(String base64) {
+        String urlString = extractUrlFromBase64(base64);
+        if (urlString == null) return this;
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
         try {
-            Method mtd = skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
-            mtd.setAccessible(true);
-            mtd.invoke(skullMeta, profile);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-            ex.printStackTrace();
+            URL url = new URL(urlString);
+            PlayerProfile profile = Bukkit.createPlayerProfile("custom");
+            profile.getTextures().setSkin(url);
+            meta.setOwnerProfile(profile);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        head.setItemMeta(skullMeta);
+        head.setItemMeta(meta);
+        this.stack = head;
         return this;
+
     }
 
     public ItemBuilder setGlow (boolean glow) {
@@ -158,5 +156,21 @@ public class ItemBuilder {
     public ItemStack build() {
         return stack;
     }
+
+    private static String extractUrlFromBase64(String base64) {
+        try {
+            String json = new String(Base64.getDecoder().decode(base64));
+            int index = json.indexOf("\"url\":\"");
+            if (index == -1) return null;
+
+            int start = index + 7;
+            int end = json.indexOf("\"", start);
+            return json.substring(start, end);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 }

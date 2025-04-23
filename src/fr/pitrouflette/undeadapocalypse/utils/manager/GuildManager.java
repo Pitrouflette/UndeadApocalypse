@@ -30,7 +30,7 @@ public class GuildManager {
         List<UUID> rank2 = new ArrayList<>();
         List<UUID> rank3 = new ArrayList<>();
         List<List> claims = new ArrayList<>();
-        Guild guild = new Guild(name, members, player, 10, player.getLocation(), false, rank1, rank2, rank3, "§6", claims);
+        Guild guild = new Guild(name, members, player.getName(), 10, player.getLocation(), false, rank1, rank2, rank3, "§6", claims);
         Main.guilds.put(name, guild);
 
         saveGuilds();
@@ -106,7 +106,6 @@ public class GuildManager {
                 assert guildSection != null;
                 String leaderName = guildSection.getString("leader");
                 assert leaderName != null;
-                Player leader = Bukkit.getPlayer(leaderName);
 
                 int reputation = guildSection.getInt("reputation");
 
@@ -143,7 +142,7 @@ public class GuildManager {
                 for (String rank3UUID : rank3UUIDs) {
                     rank3.add(UUID.fromString(rank3UUID));
                 }
-                Guild guild = new Guild(name, members, leader, reputation, hdv, publicc, rank1, rank2, rank3, color, claims);
+                Guild guild = new Guild(name, members, leaderName, reputation, hdv, publicc, rank1, rank2, rank3, color, claims);
                 Main.guilds.put(guildName, guild);
                 for (UUID member : guild.getPlayers()){
                     Player player = Bukkit.getPlayer(member);
@@ -171,7 +170,8 @@ public class GuildManager {
 
             ConfigurationSection guildSection = guildsSection.createSection(guildName);
 
-            guildSection.set("leader", guild.getChef().getName());
+            guildSection.set("leader", guild.getChef());
+            Bukkit.broadcastMessage(guild.getChef());
             guildSection.set("reputation", guild.getPower());
             guildSection.set("hdv", guild.getHdv());
             guildSection.set("name", guild.getName());
