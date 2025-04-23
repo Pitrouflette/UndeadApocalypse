@@ -35,12 +35,9 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable(){
 
-        this.getServer().getConsoleSender().sendMessage("§6===================UndeadApocalyspe===================");
-        this.getServer().getConsoleSender().sendMessage("§8prefix initialisé : §e[§6U§8A§e]");
-        this.getServer().getConsoleSender().sendMessage("§8classement des meilleurs joueurs : §2✔");
-        this.getServer().getConsoleSender().sendMessage("§8écriture du config.yml...");
-        this.getServer().getConsoleSender().sendMessage("§8status des fichiers de configurations : §2✔");
-        this.getServer().getConsoleSender().sendMessage("§6===================§2PLugin started§6===================");
+        this.getServer().getConsoleSender().sendMessage("§6===================UndeadApocalypse===================");
+        this.getServer().getConsoleSender().sendMessage("§8Status: §2Started");
+        this.getServer().getConsoleSender().sendMessage("§6===================UndeadApocalypse===================");
 
         new GuildManager().loadGuilds();
 
@@ -60,6 +57,8 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new Claims(), this);
         Bukkit.getPluginManager().registerEvents(new OnJoinLeave(), this);
         Objects.requireNonNull(getCommand("guild")).setExecutor(new GuildCommand(this));
+
+        for (Player player : Bukkit.getOnlinePlayers()) {guildChat.put(player, false);}
     }
 
     public static Main getInstance(){
