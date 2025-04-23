@@ -166,7 +166,10 @@ public class GuildManager {
             String guildName = entry.getKey();
             Guild guild = entry.getValue();
 
-            if (guild.getPlayers().isEmpty()){continue;}
+            if (guild.getPlayers().isEmpty()){
+                Main.claimedChunks.removeAll(guild.getClaims());
+                continue;
+            }
 
             ConfigurationSection guildSection = guildsSection.createSection(guildName);
 

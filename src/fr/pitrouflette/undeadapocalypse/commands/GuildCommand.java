@@ -81,6 +81,7 @@ public class GuildCommand implements TabExecutor {
                     Guild guild = new GuildManager().getPlayerGuild(player);
                     if(guild.getChef().equals(player.getName())){
                         Main.guilds.remove(guild.getName());
+                        Main.claimedChunks.removeAll(guild.getClaims());
                         new GuildManager().saveGuilds();
                     }
                 }
@@ -247,7 +248,8 @@ public class GuildCommand implements TabExecutor {
                     Guild guild = new GuildManager().getPlayerGuild(player);
                     if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         List<Integer> claim = new ArrayList<>();
-                        claim.add(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+                        claim.add(player.getLocation().getChunk().getX());
+                        claim.add(player.getLocation().getChunk().getZ());
                         if((guild.getClaims().size() * 5) < guild.getPower()){
                             if(!guild.getClaims().contains(claim)){
                                 if(!Main.claimedChunks.contains(claim)){
@@ -270,11 +272,13 @@ public class GuildCommand implements TabExecutor {
                     Guild guild = new GuildManager().getPlayerGuild(player);
                     if(guild.getChef().equals(player.getName()) || guild.getRank3().contains(player.getUniqueId())){
                         List<Integer> claim = new ArrayList<>();
-                        claim.add(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+                        claim.add(player.getLocation().getChunk().getX());
+                        claim.add(player.getLocation().getChunk().getZ());
                         if(guild.getClaims().contains(claim)){
                             guild.removeClaim(claim);
                             new GuildManager().saveGuilds();
                             player.sendMessage("§2You've successfully un-claimed this chunk !");
+                            Main.claimedChunks.remove(claim);
                         }else{
                             player.sendMessage("§2This chunk has not been claimed by your guild, therefore, you can not un-claim it !");
                         }
@@ -284,7 +288,8 @@ public class GuildCommand implements TabExecutor {
                 if(new GuildManager().isPlayerInAnyGuild(player)) {
                     Guild guild = new GuildManager().getPlayerGuild(player);
                     List<Integer> claim = new ArrayList<>();
-                    claim.add(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+                    claim.add(player.getLocation().getChunk().getX());
+                    claim.add(player.getLocation().getChunk().getZ());
                     if(guild.getClaims().contains(claim)){
                         player.sendMessage("§2You guild own this chunk !");
                     }else if(Main.claimedChunks.contains(claim)){
